@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Find Your Yoga Personality — Habuild</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --green:#1D9E75;--green-dark:#0F6E56;--green-light:#E1F5EE;--green-mid:#9FE1CB;
+  --text:#1a1a1a;--muted:#666;--faint:#999;--border:rgba(0,0,0,0.09);
+  --bg:#fafaf8;--white:#fff;
+  --serif:'DM Serif Display',Georgia,serif;--sans:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+
+/* HEADER */
+.header{padding:1.1rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:var(--white);position:sticky;top:0;z-index:10}
+
+
+.lang-row{display:flex;gap:6px}
+.lang-row.hidden{display:none}
+.lb{padding:5px 15px;border-radius:20px;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:13px;font-family:var(--sans);color:var(--muted);transition:all .15s}
+.lb.on{background:var(--green);color:#fff;border-color:var(--green);font-weight:500}
+
+/* HERO */
+.hero{text-align:center;padding:3.5rem 1.5rem 2.5rem;max-width:580px;margin:0 auto}
+.hero-tag{display:inline-block;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--green);background:var(--green-light);padding:4px 14px;border-radius:20px;margin-bottom:1.1rem}
+.hero h1{font-family:var(--serif);font-size:clamp(1.9rem,5vw,2.8rem);line-height:1.15;color:var(--text);margin-bottom:.9rem;letter-spacing:-.02em}
+.hero h1 em{color:var(--green);font-style:italic}
+.hero p{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:.6rem}
+.hero-meta{font-size:12px;color:var(--faint)}
+
+/* QUIZ WRAP */
+.qwrap{max-width:540px;margin:0 auto 4rem;padding:0 1.25rem;width:100%}
+
+/* PROGRESS */
+.prog-area{margin-bottom:1.75rem}
+.prog-top{display:flex;justify-content:space-between;margin-bottom:.5rem}
+.prog-lbl{font-size:12px;color:var(--faint)}
+.prog-bar{height:4px;background:#e8e8e8;border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--green);border-radius:2px;transition:width .4s ease}
+
+/* QUESTION CARD */
+.qcard{background:var(--white);border-radius:18px;padding:1.75rem;border:1px solid var(--border);margin-bottom:1rem;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.qnum{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-bottom:.5rem}
+.qtxt{font-family:var(--serif);font-size:clamp(1.1rem,3vw,1.35rem);line-height:1.4;color:var(--text);margin-bottom:.4rem}
+.qsub{font-size:13px;color:var(--faint);margin-bottom:1.1rem;line-height:1.5;display:none}
+.multi-hint{font-size:12px;color:var(--green);background:var(--green-light);padding:3px 10px;border-radius:10px;display:inline-block;margin-bottom:1rem;display:none}
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{padding:13px 16px;border-radius:11px;border:1px solid var(--border);background:var(--bg);cursor:pointer;text-align:left;font-size:15px;font-family:var(--sans);color:var(--text);line-height:1.45;transition:all .15s;position:relative}
+.opt:hover{border-color:var(--green-mid);background:var(--green-light)}
+.opt.sel{border-color:var(--green);background:var(--green-light);color:var(--green-dark);font-weight:500}
+.opt.sel::after{content:'✓';position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--green);font-size:13px}
+
+/* NAV */
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:1.1rem}
+.btn-back{padding:10px 20px;border-radius:20px;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:14px;font-family:var(--sans);color:var(--muted);transition:all .15s}
+.btn-back:hover{color:var(--text);border-color:#ccc}
+.btn-back:disabled{opacity:.3;cursor:default}
+.btn-next{padding:11px 26px;border-radius:20px;background:var(--green);color:#fff;font-size:15px;font-weight:500;border:none;cursor:pointer;font-family:var(--sans);transition:all .15s}
+.btn-next:hover{background:var(--green-dark)}
+.btn-next:disabled{opacity:.3;cursor:default}
+
+/* RESULT */
+.rscreen{animation:fadeUp .4s ease}
+.result-lang-row{display:flex;gap:8px;margin-bottom:1.25rem;justify-content:flex-end}
+.rlb{padding:5px 15px;border-radius:20px;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:13px;font-family:var(--sans);color:var(--muted)}
+.rlb.on{background:var(--green);color:#fff;border-color:var(--green);font-weight:500}
+
+.rhero{background:var(--white);border-radius:18px;padding:1.75rem;border:1px solid var(--border);margin-bottom:1rem}
+.r-emoji{font-size:44px;display:block;margin-bottom:.9rem}
+.r-label{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:.35rem}
+.r-type{font-family:var(--serif);font-size:clamp(1.4rem,4vw,1.9rem);color:var(--text);margin-bottom:.35rem;letter-spacing:-.02em}
+.r-tag{display:inline-block;font-size:13px;color:var(--green-dark);background:var(--green-light);padding:4px 13px;border-radius:20px;margin-bottom:1.1rem;font-style:italic}
+.r-desc{font-size:15px;color:var(--muted);line-height:1.75;margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border)}
+.r-insight-lbl{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:.6rem}
+.r-insight{font-size:15px;line-height:1.7;color:var(--text);padding:1rem 1.1rem;background:var(--green-light);border-radius:11px;border-left:3px solid var(--green);margin-bottom:1.1rem;font-family:var(--serif);font-style:italic}
+.r-traits{display:flex;flex-wrap:wrap;gap:7px}
+.trait{font-size:12px;color:var(--green-dark);background:#f0fdf8;border:1px solid var(--green-mid);padding:4px 13px;border-radius:20px}
+
+/* SHARE ROW */
+.share-row{display:flex;gap:9px;margin-bottom:1.25rem}
+.shbtn{flex:1;padding:11px;border-radius:11px;border:1px solid var(--border);background:var(--white);cursor:pointer;font-size:13px;font-family:var(--sans);color:var(--muted);transition:all .15s}
+.shbtn:hover{border-color:var(--green-mid);color:var(--green-dark);background:var(--green-light)}
+
+/* RETAKE */
+.retake-btn{display:block;width:100%;padding:11px;border-radius:11px;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:13px;font-family:var(--sans);color:var(--muted);margin-bottom:1.25rem;transition:all .15s;text-align:center}
+.retake-btn:hover{color:var(--text);border-color:#ccc}
+
+/* INVITE BOX */
+.invite-box{background:var(--green-dark);border-radius:18px;padding:1.75rem;color:#fff}
+.inv-title{font-family:var(--serif);font-size:1.35rem;margin-bottom:.45rem;line-height:1.3}
+.inv-sub{font-size:14px;opacity:.82;line-height:1.65;margin-bottom:.6rem}
+.inv-five{font-size:13px;opacity:.62;font-style:italic;margin-bottom:.6rem}
+.inv-june{font-size:13px;opacity:.75;line-height:1.6;margin-bottom:1.4rem;padding:10px 13px;background:rgba(255,255,255,.1);border-radius:10px}
+.inv-june a{color:#fff;opacity:.9;text-decoration:underline}
+.field{display:flex;flex-direction:column;gap:9px;margin-bottom:1rem}
+.fi{width:100%;padding:12px 15px;border-radius:11px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);font-size:15px;font-family:var(--sans);color:#fff;outline:none;transition:border-color .15s}
+.fi::placeholder{color:rgba(255,255,255,.42)}
+.fi:focus{border-color:rgba(255,255,255,.6)}
+.fi.err{border-color:rgba(255,120,120,.9)!important;background:rgba(255,80,80,.12)}
+.ph-row{display:flex;gap:8px}
+.cc-select{width:115px;flex-shrink:0;padding:12px 8px;border-radius:11px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);font-size:14px;font-family:var(--sans);color:#fff;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.6)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.cc-select:focus{border-color:rgba(255,255,255,.6)}
+.cc-select option{background:#0F6E56;color:#fff}
+.field-err{font-size:12px;color:rgba(255,180,180,.9);margin-top:-4px;display:none}
+.field-err.show{display:block}
+.join-btn{width:100%;padding:14px;border-radius:11px;background:#fff;color:var(--green-dark);font-size:16px;font-weight:500;border:none;cursor:pointer;font-family:var(--sans);transition:all .15s}
+.join-btn:hover{background:var(--green-light)}
+
+/* SUCCESS */
+.sucwrap{background:var(--white);border-radius:18px;padding:2.5rem 1.75rem;border:1px solid var(--border);text-align:center;animation:fadeUp .4s ease}
+.suc-emoji{font-size:52px;display:block;margin-bottom:1rem}
+.suc-title{font-family:var(--serif);font-size:1.65rem;margin-bottom:.6rem;color:var(--text)}
+.suc-sub{font-size:14px;color:var(--muted);line-height:1.7;max-width:380px;margin:0 auto 1rem}
+.suc-june{font-size:13px;color:var(--muted);line-height:1.65;background:var(--green-light);padding:12px 15px;border-radius:11px;margin:0 auto 1.5rem;max-width:420px}
+.suc-june a{color:var(--green-dark);font-weight:500}
+.socials-title{font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:.9rem}
+.socials-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;max-width:360px;margin-left:auto;margin-right:auto}
+.social-card{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:11px;border:1px solid var(--border);background:var(--bg);text-decoration:none;color:var(--text);font-size:13px;font-weight:500;transition:all .15s}
+.social-card:hover{border-color:var(--green-mid);background:var(--green-light);color:var(--green-dark)}
+.social-icon{width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:6px;flex-shrink:0}
+.si-yt{background:#FF0000}
+.si-fb{background:#1877F2}
+.si-ig{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)}
+.si-web{background:var(--green)}
+.social-icon svg{width:13px;height:13px;fill:#fff}
+.gift-btn{display:inline-block;padding:12px 28px;border-radius:20px;background:var(--green);color:#fff;font-size:15px;font-weight:500;border:none;cursor:pointer;font-family:var(--sans);margin-bottom:10px;transition:all .15s}
+.gift-btn:hover{background:var(--green-dark)}
+.share-personality{display:block;font-size:13px;color:var(--faint);cursor:pointer;border:none;background:none;font-family:var(--sans);text-decoration:underline;margin:.5rem auto 0}
+
+/* RETURN BANNER */
+.return-banner{background:var(--white);border:1px solid var(--border);border-radius:18px;padding:1.5rem;margin-bottom:1.25rem;animation:fadeUp .3s ease}
+.return-banner-top{display:flex;align-items:center;gap:12px;margin-bottom:1rem}
+.return-emoji{font-size:32px;flex-shrink:0}
+.return-name{font-size:13px;color:var(--faint);margin-bottom:2px}
+.return-type{font-family:var(--serif);font-size:1.15rem;color:var(--green-dark)}
+.return-date{font-size:12px;color:var(--faint);margin-top:2px}
+.return-btns{display:flex;gap:9px}
+.return-view{flex:1;padding:11px;border-radius:11px;background:var(--green);color:#fff;font-size:14px;font-weight:500;border:none;cursor:pointer;font-family:var(--sans);transition:all .15s}
+.return-view:hover{background:var(--green-dark)}
+.return-retake{flex:1;padding:11px;border-radius:11px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:14px;font-family:var(--sans);cursor:pointer;transition:all .15s}
+.return-retake:hover{color:var(--text);border-color:#ccc}
+
+/* FOOTER */
+footer{margin-top:auto;text-align:center;padding:1.75rem;font-size:12px;color:var(--faint);border-top:1px solid var(--border)}
+
+@media(max-width:480px){
+  .header{padding:1rem 1.1rem}
+  .hero{padding:2rem 1rem 1.75rem}
+  .qcard,.rhero,.invite-box,.sucwrap{padding:1.25rem}
+  .share-row{flex-direction:column}
+  .socials-grid{gap:8px}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <a href="https://habuild.in" target="_blank" style="display:flex;align-items:center;text-decoration:none"><img src="./habuild-logo.png" alt="Habuild" style="height:32px;width:auto;display:block"/></a>
+  <div class="lang-row">
+    <button class="lb on" onclick="setLang('en')">English</button>
+    <button class="lb" onclick="setLang('hi')">हिंदी</button>
+  </div>
+</header>
+
+<div class="hero" id="hero-sec">
+  <div class="hero-tag" id="htag"></div>
+  <h1 id="hh1"></h1>
+  <p id="hp"></p>
+  <p class="hero-meta" id="hmeta"></p>
+</div>
+
+<div class="qwrap">
+
+  <!-- RETURN BANNER -->
+  <div id="return-banner" style="display:none" class="return-banner">
+    <div class="return-banner-top">
+      <span class="return-emoji" id="rb-emoji"></span>
+      <div>
+        <div class="return-name" id="rb-label"></div>
+        <div class="return-type" id="rb-type"></div>
+        <div class="return-date" id="rb-date"></div>
+      </div>
+    </div>
+    <div class="return-btns">
+      <button class="return-view" id="rb-view" onclick="viewLastResult()"></button>
+      <button class="return-retake" id="rb-retake" onclick="dismissBanner()"></button>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="qscreen">
+    <div class="prog-area">
+      <div class="prog-top">
+        <span class="prog-lbl" id="qlbl"></span>
+        <span class="prog-lbl" id="qpct"></span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="pf" style="width:12.5%"></div></div>
+    </div>
+    <div class="qcard">
+      <div class="qnum" id="qnum"></div>
+      <div class="qtxt" id="qtxt"></div>
+      <div class="qsub" id="qsub"></div>
+      <div class="multi-hint" id="mhint"></div>
+      <div class="opts" id="olist"></div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-back" id="bbtn" onclick="goBack()" disabled></button>
+      <button class="btn-next" id="nbtn" onclick="goNext()" disabled></button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="rscreen" style="display:none" class="rscreen">
+    <div class="result-lang-row">
+      <button class="rlb on" onclick="setResultLang('en')" id="rlb-en">English</button>
+      <button class="rlb" onclick="setResultLang('hi')" id="rlb-hi">हिंदी</button>
+    </div>
+    <div class="rhero">
+      <span class="r-emoji" id="remi"></span>
+      <div class="r-label" id="rlbl"></div>
+      <div class="r-type" id="rtype"></div>
+      <div class="r-tag" id="rtag"></div>
+      <div class="r-desc" id="rdesc"></div>
+      <div class="r-insight-lbl" id="rilbl"></div>
+      <div class="r-insight" id="rinsight"></div>
+      <div class="r-traits" id="rtraits"></div>
+    </div>
+    <div class="share-row">
+      <button class="shbtn" onclick="shareRes()" id="shr-res"></button>
+      <button class="shbtn" onclick="shareQuiz()" id="shr-quiz"></button>
+    </div>
+    <button class="retake-btn" onclick="retakeQuiz()" id="retake-btn"></button>
+    <div class="invite-box">
+      <div class="inv-title" id="inv-title"></div>
+      <div class="inv-sub" id="inv-sub"></div>
+      <div class="inv-five" id="inv-five"></div>
+      <div class="inv-june" id="inv-june"></div>
+      <div class="field">
+        <input class="fi" type="text" id="iname" autocomplete="name" oninput="clearErr('iname','err-name')"/>
+        <div class="field-err" id="err-name"></div>
+        <div class="ph-row">
+          <select class="cc-select" id="icc">
+            <option value="+91" selected>🇮🇳 +91</option>
+            <option value="+1">🇺🇸 +1</option>
+            <option value="+44">🇬🇧 +44</option>
+            <option value="+61">🇦🇺 +61</option>
+            <option value="+1-CA">🇨🇦 +1</option>
+            <option value="+971">🇦🇪 +971</option>
+            <option value="+65">🇸🇬 +65</option>
+            <option value="+60">🇲🇾 +60</option>
+            <option value="+64">🇳🇿 +64</option>
+            <option value="+27">🇿🇦 +27</option>
+            <option value="+49">🇩🇪 +49</option>
+            <option value="+33">🇫🇷 +33</option>
+            <option value="+81">🇯🇵 +81</option>
+            <option value="+86">🇨🇳 +86</option>
+            <option value="+92">🇵🇰 +92</option>
+            <option value="+880">🇧🇩 +880</option>
+            <option value="+94">🇱🇰 +94</option>
+            <option value="+977">🇳🇵 +977</option>
+          </select>
+          <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+            <input class="fi" type="tel" id="iph" autocomplete="tel" style="width:100%" oninput="clearErr('iph','err-ph')"/>
+          </div>
+        </div>
+        <div class="field-err" id="err-ph"></div>
+      </div>
+      <button class="join-btn" id="joibtn" onclick="doSubmit()"></button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="sscreen" style="display:none">
+    <div class="sucwrap">
+      <div class="result-lang-row" style="justify-content:center;margin-bottom:1.5rem">
+        <button class="rlb on" onclick="setSucLang('en')" id="slb-en">English</button>
+        <button class="rlb" onclick="setSucLang('hi')" id="slb-hi">हिंदी</button>
+      </div>
+      <span class="suc-emoji">🎉</span>
+      <div class="suc-title" id="suctitle"></div>
+      <div class="suc-sub" id="sucsub"></div>
+      <div class="suc-june" id="sucjune"></div>
+      <div class="socials-title" id="soc-title"></div>
+      <div class="socials-grid">
+        <a class="social-card" href="https://habuild.in" target="_blank">
+          <span class="social-icon si-web"><svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm-1 21.9C6.1 21.4 2 17.1 2 12c0-1 .1-1.9.4-2.8L8 15v1c0 1.1.9 2 2 2v3.9zm8.9-3.4c-.3-.9-1.1-1.5-2.1-1.5h-1v-3c0-.6-.4-1-1-1H7v-2h2c.6 0 1-.4 1-1V9h2c1.1 0 2-.9 2-2V4.2C17.5 5.3 20 8.4 20 12c0 2.3-.8 4.5-2.1 6.5z"/></svg></span>
+          habuild.in
+        </a>
+        <a class="social-card" href="https://www.youtube.com/@saurabhbothra/videos" target="_blank">
+          <span class="social-icon si-yt"><svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.8 15.5V8.5l6.2 3.5-6.2 3.5z"/></svg></span>
+          YouTube
+        </a>
+        <a class="social-card" href="https://www.facebook.com/groups/habuild" target="_blank">
+          <span class="social-icon si-fb"><svg viewBox="0 0 24 24"><path d="M24 12.1C24 5.4 18.6 0 12 0S0 5.4 0 12.1C0 18.1 4.4 23 10.1 24v-8.4H7.1v-3.5h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9v2.3h3.4l-.5 3.5h-2.8V24C19.6 23 24 18.1 24 12.1z"/></svg></span>
+          Facebook
+        </a>
+        <a class="social-card" href="https://www.instagram.com/habuild" target="_blank">
+          <span class="social-icon si-ig"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8 0 3.2 0 3.6-.1 4.8-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1-3.2 0-3.6 0-4.8-.1-3.3-.1-4.8-1.7-4.9-4.9C2.2 15.6 2.2 15.2 2.2 12c0-3.2 0-3.6.1-4.8C2.4 3.9 4 2.3 7.2 2.3c1.2-.1 1.6-.1 4.8-.1zM12 0C8.7 0 8.3 0 7.1.1 2.7.3.3 2.7.1 7.1 0 8.3 0 8.7 0 12c0 3.3 0 3.7.1 4.9.2 4.4 2.6 6.8 7 7C8.3 24 8.7 24 12 24c3.3 0 3.7 0 4.9-.1 4.4-.2 6.8-2.6 7-7 .1-1.2.1-1.6.1-4.9 0-3.3 0-3.7-.1-4.9C23.7 2.7 21.3.3 16.9.1 15.7 0 15.3 0 12 0zm0 5.8a6.2 6.2 0 1 0 0 12.4A6.2 6.2 0 0 0 12 5.8zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-11.8a1.4 1.4 0 1 0 0 2.8 1.4 1.4 0 0 0 0-2.8z"/></svg></span>
+          Instagram
+        </a>
+      </div>
+      <button class="gift-btn" onclick="shareQuiz()" id="giftbtn"></button>
+      <button class="share-personality" onclick="shareRes()" id="shpersbtn"></button>
+      <button class="retake-btn" onclick="retakeQuiz()" id="suc-retake" style="max-width:300px;margin:1rem auto 0"></button>
+    </div>
+  </div>
+
+</div>
+
+<footer id="footer-txt"></footer>
+
+<script>
+var lang='en', rLang='en', sLang='en', cur=0, ans=[], lastP=0, bannerDismissed=false;
+var MULTI_Q=[1,3,5]; // Q2, Q4, Q6 are 0-indexed 1,3,5
+
+var SHEETS_URL='YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+
+var T={
+  en:{
+    htag:'2-minute quiz',
+    hh1:'Find your <em>yoga personality</em>',
+    hp:'8 questions about your real life. A result that actually fits you. And an honest answer to: will Habuild work for me?',
+    hmeta:'Free · No login · English & Hindi',
+    ql:function(n){return 'Question '+n+' of 8'},
+    qpct:function(n){return Math.round(n/8*100)+'%'},
+    qnum:function(n){return '0'+n},
+    next:'Next →',back:'← Back',seeResult:'See my yoga personality →',
+    multiHint:'Select all that apply',
+    rLabel:'Your yoga personality',
+    insightLbl:'Your insight',
+    shrRes:'Share my personality',shrQuiz:'Gift to a friend',
+    retake:'↩ Take the quiz again',
+    invTitle:'Experience it yourself — free for 21 days',
+    invSub:'Live yoga sessions from your own home. No equipment, no prior experience needed. Join for just 5 minutes on day one if that\'s all you have.',
+    invFive:'You don\'t have to stay the whole session. 5 minutes is enough to start.',
+    invJune:'All details about the June Challenge will be shared in the first week of June via WhatsApp. Until then, explore Habuild at <a href="https://habuild.in" target="_blank">habuild.in</a>',
+    namePh:'Your full name',phonePh:'WhatsApp number',
+    errNameEmpty:'Please enter your full name',
+    errPhEmpty:'Please enter your WhatsApp number',
+    errPhInvalid:'Please enter a valid number (at least 7 digits)',
+    joinBtn:'Join the 21-Day Free Yoga Challenge',
+    sucTitle:'You\'re in! See you on the mat.',
+    sucSub:'You\'ll get a WhatsApp message before your first session.',
+    sucJune:'All details about the June Challenge will come to you in the first week of June. Until then, explore everything Habuild has to offer at <a href="https://habuild.in" target="_blank">habuild.in</a>',
+    socTitle:'Explore Habuild',
+    giftBtn:'Gift this quiz to a friend',
+    shPers:'Share my yoga personality',
+    footer:'A Habuild initiative · June 2026 Challenge · habuild.in',
+    rbLabel:'Your last result',
+    rbView:'View my result',
+    rbRetake:'Retake quiz',
+    rbDatePrefix:'Taken on',
+    shareResMsg:function(t){return 'I just found out I\'m "'+t+'" — take this 2-min quiz to find your yoga personality! https://habuild.in/quiz'},
+    shareQuizMsg:'Find your yoga personality in 2 minutes — and find out if Habuild fits your life. https://habuild.in/quiz',
+    qs:[
+      {q:'What does your day typically look like?',
+       opts:['Up early, quiet time before the world starts','Fast-paced — work, deadlines, back-to-back','Full house — always someone who needs something','Slow and steady, I set my own pace']},
+      {q:'Where does your body feel it most?',
+       sub:'Pick the one that bothers you most right now.',
+       opts:['Knees or hips — some movements feel stiff','Back or neck — sitting takes a toll','Low energy — tired before the day is half done','Nothing specific — I just want to stay ahead']},
+      {q:'What\'s actually stopped you from doing yoga before?',
+       opts:['No time — genuinely packed schedule','Didn\'t know where to start','Tried before, couldn\'t stay consistent','Haven\'t really tried yet']},
+      {q:'When do you usually get a moment for yourself?',
+       opts:['Early morning before things get busy','Late morning once the rush settles','Evening when the day winds down','Honestly, rarely — I steal whatever I can']},
+      {q:'How do you feel about online sessions at home?',
+       sub:'Habuild sessions happen live — you join from your own room.',
+       opts:['Very comfortable, I already do this','Fine as long as it\'s easy to join','A bit hesitant but willing to try','Would prefer in-person but open to online']},
+      {q:'What would make you feel like yoga was worth it?',
+       opts:['Less pain and more ease in my body','A calmer mind and better sleep','Actually sticking to something for once','Feeling stronger and more energetic']},
+      {q:'How do you do best with new habits?',
+       opts:['Alone, quietly, no fuss','With someone alongside me','When there\'s a clear goal or challenge','When it feels easy and low-pressure']},
+      {q:'Last one — which feels most like you?',
+       opts:['The disciplined one — I commit and follow through','The social one — community keeps me going','The skeptic — show me results and I\'ll believe','The seeker — always curious to learn more']}
+    ]
+  },
+  hi:{
+    htag:'2 मिनट का छोटा सा क्विज़',
+    hh1:'जानिए आपकी <em>योगा पर्सनैलिटी</em> क्या है',
+    hp:'आपकी रोज़मर्रा की ज़िंदगी से जुड़े 8 आसान सवाल। और एक सीधा सा जवाब: क्या Habuild आपके लिए सही रहेगा?',
+    hmeta:'फ्री है · लॉगिन की ज़रूरत नहीं · हिंदी और अंग्रेज़ी दोनों में उपलब्ध',
+    ql:function(n){return 'प्रश्न '+n+' / 8'},
+    qpct:function(n){return Math.round(n/8*100)+'%'},
+    qnum:function(n){return '0'+n},
+    next:'आगे →',back:'← वापस',seeResult:'पूरा करें →',
+    multiHint:'जितने सही लगें, सभी चुनें',
+    rLabel:'आपकी योगा पर्सनैलिटी',
+    insightLbl:'आपके लिए ख़ास बात',
+    shrRes:'अपनी personality शेयर करें',shrQuiz:'किसी दोस्त को gift करें',
+    retake:'↩ क्विज़ फिर से लें',
+    invTitle:'खुद अनुभव करें — 21 दिन तक बिल्कुल फ्री',
+    invSub:'अपने ही घर से लाइव योगा सेशन्स। न किसी उपकरण की ज़रूरत, न पहले का अनुभव। पहले दिन सिर्फ 5 मिनट जुड़ें — उतना भी काफी है।',
+    invFive:'पूरे सेशन में रहना ज़रूरी नहीं है। शुरुआत के लिए 5 मिनट ही काफी हैं।',
+    invJune:'June Challenge की पूरी जानकारी जून के पहले हफ़्ते में WhatsApp पर मिलेगी। तब तक Habuild को explore करें: <a href="https://habuild.in" target="_blank">habuild.in</a>',
+    namePh:'आपका पूरा नाम',phonePh:'व्हाट्सऐप नंबर',
+    errNameEmpty:'कृपया अपना पूरा नाम दर्ज करें',
+    errPhEmpty:'कृपया अपना व्हाट्सऐप नंबर दर्ज करें',
+    errPhInvalid:'कृपया सही नंबर दर्ज करें (कम से कम 7 अंक)',
+    joinBtn:'21 दिन का फ्री योगा चैलेंज जॉइन करें',
+    sucTitle:'आप जुड़ चुके हैं! मैट पर मिलते हैं 🧘‍♀️',
+    sucSub:'आपको आपके पहले सेशन से पहले व्हाट्सऐप पर मैसेज मिल जाएगा।',
+    sucJune:'जून चैलेंज की सारी जानकारी आपको जून के पहले हफ्ते में मिल जाएगी। तब तक, Habuild पर और भी चीज़ें एक्सप्लोर करें: <a href="https://habuild.in" target="_blank">habuild.in</a>',
+    socTitle:'Habuild को एक्सप्लोर करें',
+    giftBtn:'इस क्विज़ को किसी दोस्त के साथ शेयर करें',
+    shPers:'मेरी योगा पर्सनैलिटी शेयर करें',
+    footer:'एक Habuild initiative · June 2026 Challenge · habuild.in',
+    rbLabel:'आपका पिछला रिज़ल्ट',
+    rbView:'मेरा रिज़ल्ट देखें',
+    rbRetake:'क्विज़ फिर से लें',
+    rbDatePrefix:'लिया था',
+    shareResMsg:function(t){return 'मुझे पता चला मैं "'+t+'" हूँ — आप भी देखें अपनी योगा पर्सनैलिटी! https://habuild.in/quiz'},
+    shareQuizMsg:'2 मिनट में जानो अपनी योगा पर्सनैलिटी — और पता करो क्या Habuild आपकी life में fit होगा। https://habuild.in/quiz',
+    qs:[
+      {q:'आपका दिन आमतौर पर कैसा होता है?',
+       opts:['सुबह जल्दी उठना, दुनिया शुरू होने से पहले थोड़ा अपना समय','तेज़ रफ्तार — काम, डेडलाइन्स, एक के बाद एक काम','घर में रौनक — हमेशा किसी न किसी को कुछ चाहिए होता है','आराम से, अपने हिसाब से दिन चलाता/चलाती हूँ']},
+      {q:'आपके शरीर में सबसे ज़्यादा असर कहाँ महसूस होता है?',
+       sub:'वही चुनें जो इस समय आपको सबसे ज़्यादा परेशान करता है।',
+       opts:['घुटने या कमर के आसपास — कुछ मूवमेंट्स में जकड़न महसूस होती है','पीठ या गर्दन — लंबे समय तक बैठने का असर दिखता है','ऊर्जा कम लगती है — आधा दिन भी पूरा नहीं होता और थकान आ जाती है','कुछ खास नहीं — बस आगे बने रहना चाहता/चाहती हूँ']},
+      {q:'अब तक आपको योगा शुरू करने से किस चीज़ ने रोका है?',
+       opts:['समय ही नहीं मिला — दिन पहले से ही बहुत भरा हुआ रहता है','समझ नहीं आया कि शुरुआत कहाँ से करें','पहले कोशिश की थी, लेकिन नियमित नहीं रह पाया/पाई','अभी तक सच में कोशिश ही नहीं की']},
+      {q:'आपको आमतौर पर अपने लिए समय कब मिलता है?',
+       opts:['सुबह जल्दी, दिन की भागदौड़ शुरू होने से पहले थोड़ा सुकून होता है','देर सुबह, जब शुरुआती भागदौड़ थोड़ी कम हो जाती है','शाम को, जब दिन धीरे-धीरे खत्म होने लगता है','सच कहूँ तो, बहुत कम — जितना मिल जाए, उसी में काम चलाता/चलाती हूँ']},
+      {q:'घर पर ऑनलाइन सेशन्स के बारे में आपका क्या विचार है?',
+       sub:'Habuild के सेशन्स लाइव होते हैं — आप अपने ही कमरे से जुड़ते हैं।',
+       opts:['काफी सहज हूँ, मैं पहले से ही ऐसा करता/करती हूँ','ठीक है, बस जुड़ना आसान होना चाहिए','थोड़ी झिझक है, लेकिन ट्राय करने को तैयार हूँ','आमने-सामने वाले सेशन्स पसंद हैं, पर ऑनलाइन के लिए भी तैयार हूँ']},
+      {q:'आपको कब लगेगा कि योगा करना सच में फायदेमंद रहा?',
+       opts:['शरीर में कम दर्द और ज़्यादा आराम महसूस हो','मन शांत रहे और नींद बेहतर हो जाए','इस बार सच में नियमित रह पाऊँ','खुद को ज़्यादा मज़बूत और ऊर्जावान महसूस करूँ']},
+      {q:'नई आदतें अपनाने में आप किस तरह बेहतर करते हैं?',
+       opts:['अकेले, शांति से — बिना किसी झंझट के','किसी के साथ — साथ होने से मदद मिलती है','जब कोई साफ लक्ष्य या चैलेंज हो','जब सब कुछ आसान और बिना दबाव के लगे']},
+      {q:'आखिरी सवाल — इनमें से कौन-सा आपके जैसा लगता है?',
+       opts:['अनुशासित — जो ठान लेता/लेती हूँ, उसे निभाता/निभाती हूँ','मिलनसार — साथ और कम्युनिटी से मोटिवेशन मिलता है','थोड़ा संदेह रखने वाला/वाली — पहले नतीजे दिखें, तब भरोसा हो','खोजी — हमेशा कुछ नया सीखने की चाह रहती है']}
+    ]
+  }
+};
+
+var profiles=[
+  {
+    name:{en:'The Early Riser',hi:'सुबह का साधक'},
+    emoji:'🌅',
+    tag:{en:'Your quiet hours are your superpower',hi:'सुबह की ख़ामोशी आपकी सबसे बड़ी ताक़त है'},
+    desc:{
+      en:'You know what it feels like to have the world to yourself before it wakes up. That silence is rare, and you protect it. Yoga in that window isn\'t a chore — it becomes the thing that sets the tone for everything that follows.',
+      hi:'आपको वो एहसास पता है — जब पूरी दुनिया अभी सोई हो, और वो वक़्त सिर्फ़ आपका हो। वो ख़ामोशी बहुत क़ीमती है, और आप उसे संभाल कर रखते हैं। उस वक़्त में किया गया योगा एक काम नहीं बनता — वो वो चीज़ बन जाता है जो बाकी पूरे दिन की नींव रखती है।'
+    },
+    insight:{
+      en:'People with your rhythm tend to stick with yoga longer than anyone else. Not because they\'re more motivated — but because they\'ve already protected the time. The hardest part is already done.',
+      hi:'आपकी लय वाले लोग योगा में सबसे ज़्यादा टिकते हैं। इसलिए नहीं कि उनमें ज़्यादा जोश है — बल्कि इसलिए कि उन्होंने पहले से वक़्त बचा रखा है। जो सबसे मुश्किल काम था — वो आपने कर लिया है।'
+    },
+    traits:{en:['Consistent','Self-driven','Values stillness','Morning person'],hi:['नियमित','आत्मनिर्भर','शांति से प्यार','सुबह के इंसान']}
+  },
+  {
+    name:{en:'The Pressure Carrier',hi:'बोझ उठाने वाले'},
+    emoji:'💼',
+    tag:{en:'Your body is absorbing more than you realise',hi:'आपका शरीर जितना आप सोचते हैं, उससे कहीं ज़्यादा झेल रहा है'},
+    desc:{
+      en:'Your day runs at full speed, and your body keeps score. The tension in your back, the stiffness in your neck, the tiredness that doesn\'t go away with sleep — that\'s not age. That\'s accumulated stress looking for a way out.',
+      hi:'आपका दिन पूरी रफ्तार से भागता है, और शरीर चुपचाप हिसाब रखता है। पीठ का दर्द, गर्दन की अकड़न, वो थकान जो सोने के बाद भी नहीं जाती — यह उम्र नहीं है। यह वो जमा हुआ तनाव है जो बाहर निकलने की राह ढूंढ रहा है।'
+    },
+    insight:{
+      en:'Even 15 minutes of intentional movement after a packed day creates a real shift in how your body holds tension. You don\'t need more time — you need a better end to the day.',
+      hi:'भरे-पूरे दिन के बाद सिर्फ 15 मिनट की सोची-समझी हलचल से शरीर में तनाव रखने का तरीका बदल जाता है। आपको और वक़्त नहीं चाहिए — बस दिन का एक बेहतर अंत चाहिए।'
+    },
+    traits:{en:['High performer','Resilient','Needs recovery','Evening suits you'],hi:['मेहनती','दृढ़','रिकवरी ज़रूरी','शाम सबसे सही']}
+  },
+  {
+    name:{en:'The Quiet Giver',hi:'चुपचाप देने वाले'},
+    emoji:'🏡',
+    tag:{en:'You take care of everyone — who takes care of you?',hi:'आप सबका ख़याल रखते हैं — आपका ख़याल कौन रखता है?'},
+    desc:{
+      en:'You move through the day giving — your attention, your energy, your presence. By the time you think about yourself, the day is almost done. But here\'s what you probably already know: you can\'t pour from an empty cup.',
+      hi:'आप पूरा दिन देते रहते हैं — अपना ध्यान, अपनी ऊर्जा, अपनी मौजूदगी। जब तक खुद के बारे में सोचते हैं, दिन लगभग खत्म हो चुका होता है। लेकिन एक बात जो शायद आप पहले से जानते हैं — खाली बर्तन से कुछ नहीं डाला जा सकता।'
+    },
+    insight:{
+      en:'15 minutes that are completely yours — not productive, not for anyone else. Just movement and breath. That\'s not selfish. That\'s what makes everything else sustainable.',
+      hi:'15 मिनट जो पूरी तरह आपके हों — किसी काम के लिए नहीं, किसी के लिए नहीं। बस हलचल और सांस। यह स्वार्थ नहीं है। यही वो चीज़ है जो बाकी सब को टिकाए रखती है।'
+    },
+    traits:{en:['Nurturing','Patient','Deserves own time','Flexible timing'],hi:['देखभाल करने वाले','धैर्यवान','अपना वक़्त ज़रूरी','कभी भी हो सकता है']}
+  },
+  {
+    name:{en:'The Reluctant Starter',hi:'झिझकते हुए शुरुआत करने वाले'},
+    emoji:'🌱',
+    tag:{en:'Starting is the hardest part — and you\'re already past it',hi:'शुरू करना सबसे मुश्किल होता है — और आप वो कर चुके हैं'},
+    desc:{
+      en:'You\'ve thought about this. Maybe tried before. Maybe talked yourself out of it more than once. That\'s not a character flaw — that\'s most people. The ones who stuck with yoga didn\'t have more willpower. They just found the right entry point.',
+      hi:'आपने इस बारे में सोचा है। शायद पहले कोशिश भी की हो। शायद खुद को एक से ज़्यादा बार रोका भी हो। यह कोई कमज़ोरी नहीं है — यही ज़्यादातर लोगों की कहानी है। जो योगा में टिके, उनके पास ज़्यादा इरादा नहीं था। बस उन्हें सही शुरुआत मिली।'
+    },
+    insight:{
+      en:'The people who stayed longest with Habuild almost all say the same thing: "I just joined for 5 minutes on day one." That was all it took. There is no right time. There is only now.',
+      hi:'Habuild में सबसे ज़्यादा टिकने वाले लगभग सभी एक ही बात कहते हैं: "पहले दिन बस 5 मिनट के लिए जुड़ा/जुड़ी था/थी।" बस इतना काफी था। कोई सही वक़्त नहीं आता। बस अभी होता है।'
+    },
+    traits:{en:['Thoughtful','Self-aware','Needs easy start','Community helps'],hi:['सोच-समझकर चलने वाले','खुद को पहचानते हैं','आसान शुरुआत चाहिए','साथ मिले तो बेहतर']}
+  }
+];
+
+function isMulti(q){return MULTI_Q.indexOf(q)>-1;}
+
+function getProfile(){
+  var a=ans,early=0,pressure=0,giver=0,starter=0;
+  var get=function(qi,v){
+    var av=a[qi];
+    if(av===undefined)return false;
+    if(Array.isArray(av))return av.indexOf(v)>-1;
+    return av===v;
+  };
+  if(get(0,0))early+=2;if(get(0,1))pressure+=2;if(get(0,2))giver+=2;if(get(0,3))early++;
+  if(get(1,0)||get(1,1))pressure++;if(get(1,2))starter++;
+  if(get(2,0))pressure++;if(get(2,1)||get(2,3))starter+=2;if(get(2,2))starter++;
+  if(get(3,0))early+=2;if(get(3,2))pressure++;if(get(3,3))giver+=2;
+  if(get(5,0)||get(5,2))pressure++;if(get(5,1))starter++;if(get(5,3))early++;
+  if(get(6,0))early++;if(get(6,1))giver++;if(get(6,3))starter++;
+  if(get(7,0))early++;if(get(7,1))giver++;if(get(7,2))starter++;if(get(7,3))pressure++;
+  var s=[early,pressure,giver,starter];
+  lastP=s.indexOf(Math.max.apply(null,s));
+  return lastP;
+}
+
+function applyStatic(){
+  var t=T[lang];
+  document.getElementById('htag').textContent=t.htag;
+  document.getElementById('hh1').innerHTML=t.hh1;
+  document.getElementById('hp').textContent=t.hp;
+  document.getElementById('hmeta').textContent=t.hmeta;
+  document.getElementById('footer-txt').textContent=t.footer;
+}
+
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lb').forEach(function(b,i){b.classList.toggle('on',(i===0&&l==='en')||(i===1&&l==='hi'));});
+  applyStatic();
+  renderQ();
+}
+
+function setResultLang(l){
+  rLang=l;
+  document.getElementById('rlb-en').classList.toggle('on',l==='en');
+  document.getElementById('rlb-hi').classList.toggle('on',l==='hi');
+  renderResult(lastP);
+}
+
+function renderQ(){
+  var t=T[lang],q=t.qs[cur],multi=isMulti(cur);
+  document.getElementById('qlbl').textContent=t.ql(cur+1);
+  document.getElementById('qpct').textContent=t.qpct(cur+1);
+  document.getElementById('qnum').textContent=t.qnum(cur+1);
+  document.getElementById('qtxt').textContent=q.q;
+  var sub=document.getElementById('qsub');
+  if(q.sub){sub.textContent=q.sub;sub.style.display='block';}else{sub.style.display='none';}
+  var mh=document.getElementById('mhint');
+  if(multi){mh.textContent=t.multiHint;mh.style.display='inline-block';}else{mh.style.display='none';}
+  document.getElementById('pf').style.width=((cur+1)/8*100)+'%';
+  var list=document.getElementById('olist');list.innerHTML='';
+  q.opts.forEach(function(o,i){
+    var b=document.createElement('button');
+    var sel=multi?(Array.isArray(ans[cur])&&ans[cur].indexOf(i)>-1):(ans[cur]===i);
+    b.className='opt'+(sel?' sel':'');
+    b.textContent=o;
+    b.onclick=function(){pick(i);};
+    list.appendChild(b);
+  });
+  var hasAns=multi?(Array.isArray(ans[cur])&&ans[cur].length>0):(ans[cur]!==undefined);
+  document.getElementById('nbtn').disabled=!hasAns;
+  document.getElementById('bbtn').disabled=cur===0;
+  document.getElementById('nbtn').textContent=cur===7?T[lang].seeResult:T[lang].next;
+  document.getElementById('bbtn').textContent=T[lang].back;
+}
+
+function pick(i){
+  var multi=isMulti(cur);
+  if(multi){
+    if(!Array.isArray(ans[cur]))ans[cur]=[];
+    var idx=ans[cur].indexOf(i);
+    if(idx>-1)ans[cur].splice(idx,1);else ans[cur].push(i);
+  }else{
+    ans[cur]=i;
+  }
+  var list=document.getElementById('olist');
+  list.querySelectorAll('.opt').forEach(function(b,idx){
+    var sel=multi?(Array.isArray(ans[cur])&&ans[cur].indexOf(idx)>-1):(ans[cur]===idx);
+    b.classList.toggle('sel',sel);
+  });
+  var hasAns=multi?(Array.isArray(ans[cur])&&ans[cur].length>0):(ans[cur]!==undefined);
+  document.getElementById('nbtn').disabled=!hasAns;
+}
+
+function goNext(){
+  var hasAns=isMulti(cur)?(Array.isArray(ans[cur])&&ans[cur].length>0):(ans[cur]!==undefined);
+  if(!hasAns)return;
+  if(cur<7){cur++;renderQ();}else{showResult();}
+}
+function goBack(){if(cur>0){cur--;renderQ();}}
+
+function renderResult(pi){
+  var p=profiles[pi],t=T[rLang];
+  document.getElementById('remi').textContent=p.emoji;
+  document.getElementById('rlbl').textContent=t.rLabel;
+  document.getElementById('rtype').textContent=p.name[rLang];
+  document.getElementById('rtag').textContent=p.tag[rLang];
+  document.getElementById('rdesc').textContent=p.desc[rLang];
+  document.getElementById('rilbl').textContent=t.insightLbl;
+  document.getElementById('rinsight').textContent=p.insight[rLang];
+  var tr=document.getElementById('rtraits');tr.innerHTML='';
+  p.traits[rLang].forEach(function(x){var s=document.createElement('span');s.className='trait';s.textContent=x;tr.appendChild(s);});
+  document.getElementById('shr-res').textContent=t.shrRes;
+  document.getElementById('shr-quiz').textContent=t.shrQuiz;
+  document.getElementById('retake-btn').textContent=t.retake;
+  document.getElementById('inv-title').textContent=t.invTitle;
+  document.getElementById('inv-sub').textContent=t.invSub;
+  document.getElementById('inv-five').textContent=t.invFive;
+  document.getElementById('inv-june').innerHTML=t.invJune;
+  document.getElementById('joibtn').textContent=t.joinBtn;
+  document.getElementById('iname').placeholder=t.namePh;
+  document.getElementById('iph').placeholder=t.phonePh;
+  document.getElementById('iname').classList.remove('err');
+  document.getElementById('iph').classList.remove('err');
+  document.getElementById('err-name').classList.remove('show');
+  document.getElementById('err-ph').classList.remove('show');
+}
+
+function showResult(){
+  document.getElementById('qscreen').style.display='none';
+  document.getElementById('hero-sec').style.display='none';
+  document.getElementById('rscreen').style.display='block';
+  document.querySelector('.lang-row').classList.add('hidden');
+  rLang=lang;
+  document.getElementById('rlb-en').classList.toggle('on',lang==='en');
+  document.getElementById('rlb-hi').classList.toggle('on',lang==='hi');
+  renderResult(getProfile());
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function retakeQuiz(){
+  cur=0;ans=[];lastP=0;
+  bannerDismissed=true;
+  document.getElementById('rscreen').style.display='none';
+  document.getElementById('sscreen').style.display='none';
+  document.getElementById('return-banner').style.display='none';
+  document.getElementById('hero-sec').style.display='block';
+  document.getElementById('qscreen').style.display='block';
+  document.querySelector('.lang-row').classList.remove('hidden');
+  renderQ();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function setSucLang(l){
+  sLang=l;
+  document.getElementById('slb-en').classList.toggle('on',l==='en');
+  document.getElementById('slb-hi').classList.toggle('on',l==='hi');
+  renderSuc();
+}
+
+function renderSuc(){
+  var t=T[sLang];
+  document.getElementById('suctitle').textContent=t.sucTitle;
+  document.getElementById('sucsub').textContent=t.sucSub;
+  document.getElementById('sucjune').innerHTML=t.sucJune;
+  document.getElementById('soc-title').textContent=t.socTitle;
+  document.getElementById('giftbtn').textContent=t.giftBtn;
+  document.getElementById('shpersbtn').textContent=t.shPers;
+  document.getElementById('suc-retake').textContent=t.retake;
+}
+
+function clearErr(inputId,errId){
+  document.getElementById(inputId).classList.remove('err');
+  document.getElementById(errId).classList.remove('show');
+}
+
+function doSubmit(){
+  var t=T[lang];
+  var n=document.getElementById('iname').value.trim();
+  var p=document.getElementById('iph').value.trim();
+  var ccRaw=document.getElementById('icc').value;
+  var cc=ccRaw==='1-CA'?'+1':ccRaw;
+  var valid=true;
+
+  // Name validation
+  var nameEl=document.getElementById('iname');
+  var errName=document.getElementById('err-name');
+  if(!n){
+    nameEl.classList.add('err');
+    errName.textContent=t.errNameEmpty;
+    errName.classList.add('show');
+    valid=false;
+  } else {
+    nameEl.classList.remove('err');
+    errName.classList.remove('show');
+  }
+
+  // Phone validation — digits only, min 7
+  var digits=p.replace(/\D/g,'');
+  var phEl=document.getElementById('iph');
+  var errPh=document.getElementById('err-ph');
+  if(!p){
+    phEl.classList.add('err');
+    errPh.textContent=t.errPhEmpty;
+    errPh.classList.add('show');
+    valid=false;
+  } else if(digits.length<7){
+    phEl.classList.add('err');
+    errPh.textContent=t.errPhInvalid;
+    errPh.classList.add('show');
+    valid=false;
+  } else {
+    phEl.classList.remove('err');
+    errPh.classList.remove('show');
+  }
+
+  if(!valid)return;
+
+  var profile=profiles[lastP];
+  sendToSheet({name:n,phone:cc+digits,profile:profile.name.en,lang:lang,timestamp:new Date().toISOString()});
+  saveResult();
+  document.getElementById('rscreen').style.display='none';
+  document.getElementById('sscreen').style.display='block';
+  sLang=lang;
+  document.getElementById('slb-en').classList.toggle('on',lang==='en');
+  document.getElementById('slb-hi').classList.toggle('on',lang==='hi');
+  renderSuc();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function sendToSheet(data){
+  if(SHEETS_URL==='YOUR_GOOGLE_APPS_SCRIPT_URL_HERE')return;
+  fetch(SHEETS_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).catch(function(){});
+}
+
+function shareRes(){
+  var p=profiles[lastP];
+  var t=T[lang];
+  window.open('https://wa.me/?text='+encodeURIComponent(t.shareResMsg(p.name[lang])),'_blank');
+}
+function shareQuiz(){
+  window.open('https://wa.me/?text='+encodeURIComponent(T[lang].shareQuizMsg),'_blank');
+}
+
+function saveResult(){
+  try{
+    var profile=profiles[lastP];
+    localStorage.setItem('habuild_result',JSON.stringify({
+      profileIndex:lastP,
+      date:new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})
+    }));
+  }catch(e){}
+}
+
+function loadResult(){
+  try{
+    var d=localStorage.getItem('habuild_result');
+    return d?JSON.parse(d):null;
+  }catch(e){return null;}
+}
+
+function renderBanner(){
+  if(bannerDismissed)return;
+  var saved=loadResult();
+  if(!saved)return;
+  var t=T[lang];
+  var p=profiles[saved.profileIndex];
+  document.getElementById('rb-label').textContent=t.rbLabel;
+  document.getElementById('rb-emoji').textContent=p.emoji;
+  document.getElementById('rb-type').textContent=p.name[lang];
+  document.getElementById('rb-date').textContent=t.rbDatePrefix+' '+saved.date;
+  document.getElementById('rb-view').textContent=t.rbView;
+  document.getElementById('rb-retake').textContent=t.rbRetake;
+  document.getElementById('return-banner').style.display='block';
+}
+
+function viewLastResult(){
+  var saved=loadResult();
+  if(!saved)return;
+  lastP=saved.profileIndex;
+  bannerDismissed=true;
+  document.getElementById('return-banner').style.display='none';
+  document.getElementById('qscreen').style.display='none';
+  document.getElementById('hero-sec').style.display='none';
+  document.getElementById('rscreen').style.display='block';
+  document.querySelector('.lang-row').classList.add('hidden');
+  rLang=lang;
+  document.getElementById('rlb-en').classList.toggle('on',lang==='en');
+  document.getElementById('rlb-hi').classList.toggle('on',lang==='hi');
+  renderResult(lastP);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function dismissBanner(){
+  bannerDismissed=true;
+  document.getElementById('return-banner').style.display='none';
+}
+
+applyStatic();
+renderBanner();
+renderQ();
+</script>
+</body>
+</html>
