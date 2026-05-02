@@ -156,6 +156,24 @@ footer{margin-top:auto;text-align:center;padding:1.75rem;font-size:12px;color:va
   .socials-grid{gap:8px}
 }
 </style>
+
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '3375759972600936');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=3375759972600936&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 </head>
 <body>
 
@@ -220,21 +238,6 @@ footer{margin-top:auto;text-align:center;padding:1.75rem;font-size:12px;color:va
       <button class="rlb on" onclick="setResultLang('en')" id="rlb-en">English</button>
       <button class="rlb" onclick="setResultLang('hi')" id="rlb-hi">हिंदी</button>
     </div>
-    <div class="rhero">
-      <span class="r-emoji" id="remi"></span>
-      <div class="r-label" id="rlbl"></div>
-      <div class="r-type" id="rtype"></div>
-      <div class="r-tag" id="rtag"></div>
-      <div class="r-desc" id="rdesc"></div>
-      <div class="r-insight-lbl" id="rilbl"></div>
-      <div class="r-insight" id="rinsight"></div>
-      <div class="r-traits" id="rtraits"></div>
-    </div>
-    <div class="share-row">
-      <button class="shbtn" onclick="shareRes()" id="shr-res"></button>
-      <button class="shbtn" onclick="shareQuiz()" id="shr-quiz"></button>
-    </div>
-    <button class="retake-btn" onclick="retakeQuiz()" id="retake-btn"></button>
     <div class="invite-box">
       <div class="inv-title" id="inv-title"></div>
       <div class="inv-sub" id="inv-sub"></div>
@@ -272,6 +275,21 @@ footer{margin-top:auto;text-align:center;padding:1.75rem;font-size:12px;color:va
       </div>
       <button class="join-btn" id="joibtn" onclick="doSubmit()"></button>
     </div>
+    <div class="rhero">
+      <span class="r-emoji" id="remi"></span>
+      <div class="r-label" id="rlbl"></div>
+      <div class="r-type" id="rtype"></div>
+      <div class="r-tag" id="rtag"></div>
+      <div class="r-desc" id="rdesc"></div>
+      <div class="r-insight-lbl" id="rilbl"></div>
+      <div class="r-insight" id="rinsight"></div>
+      <div class="r-traits" id="rtraits"></div>
+    </div>
+    <div class="share-row">
+      <button class="shbtn" onclick="shareRes()" id="shr-res"></button>
+      <button class="shbtn" onclick="shareQuiz()" id="shr-quiz"></button>
+    </div>
+    <button class="retake-btn" onclick="retakeQuiz()" id="retake-btn"></button>
   </div>
 
   <!-- SUCCESS -->
@@ -621,6 +639,7 @@ function renderResult(pi){
 }
 
 function showResult(){
+fbq('track', 'ViewContent');
   document.getElementById('qscreen').style.display='none';
   document.getElementById('hero-sec').style.display='none';
   document.getElementById('rscreen').style.display='block';
@@ -709,6 +728,7 @@ function doSubmit(){
   }
 
   if(!valid)return;
+  fbq('track', 'Lead');
 
   var profile=profiles[lastP];
   sendToSheet({name:n,phone:cc+digits,profile:profile.name.en,lang:lang,timestamp:new Date().toISOString()});
